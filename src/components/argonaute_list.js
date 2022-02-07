@@ -37,6 +37,7 @@ class Argonautelist extends React.Component {
                 .then(data =>
                 {
                     this.refreshData();
+                    this.setState({name:''});
                 });
         } catch (err) {
             console.log(err);

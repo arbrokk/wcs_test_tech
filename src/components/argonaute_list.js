@@ -43,8 +43,23 @@ class Argonautelist extends React.Component {
         }
     };
 
-    removeArgonaute(singleItem) {
+    removeArgonaute(itemID) {
+        try {
+            console.log(itemID);
+            
 
+            fetch("https://api.airtable.com/v0/appkXhxTVwmskcaPA/argonautes/"+itemID+"?api_key=key4TVWBuan5bRXL5", {
+                method: "DELETE"                    
+                }
+        ).then(response => response.json())
+                .then(data =>
+                {
+                    console.log(data)
+                    this.refreshData();
+                });
+        } catch (err) {
+            console.log(err);
+        }
     }
     
 
@@ -58,14 +73,13 @@ class Argonautelist extends React.Component {
         .then(data => {
            this.setState({ items: data.records });
            this.setState({DataisLoaded: true})
-           console.log(this.state.items[0]["id"]);
         }).catch(err => {
           // Error :(
         });
     };
 
     render() {
-        const { DataisLoaded, items } = this.state;
+        const { DataisLoaded } = this.state;
 
         if (!DataisLoaded) return <div>
             <h2 className="font-title text-2xl py-4">Chargement (de la liste hein, pas du bateau encore)</h2>
@@ -95,9 +109,13 @@ class Argonautelist extends React.Component {
 
                     {
                         Object.entries(this.state.items).map(([key, item]) => (
-                            <ol key={key} className="capitalize py-2" >
+                            <ol key={key} className="capitalize py-2 flex mx-auto" >
                                 {item["fields"]["Name"]}
-                                <span onClick={() => this.removeArgonaute(item["fields"])}>x</span>
+                                <span className="self-center" onClick={() => this.removeArgonaute(item["id"])}>
+                                <svg className="h-5 w-5 text-red-400 ml-2"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                </span>
                             </ol>
                         ))
                     }

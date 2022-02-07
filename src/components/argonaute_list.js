@@ -1,7 +1,5 @@
 import React from 'react';
 
-const APIkey = process.env.AIRTBL_API_KEY;
-
 class Argonautelist extends React.Component {
 
     constructor(props) {
@@ -24,7 +22,7 @@ class Argonautelist extends React.Component {
     handleSubmit(e) {
         e.preventDefault();
         try {
-            fetch("https://api.airtable.com/v0/appkXhxTVwmskcaPA/argonautes?api_key="+APIkey, {
+            fetch("https://api.airtable.com/v0/appkXhxTVwmskcaPA/argonautes?api_key="+process.env.AIRTBL_API_KEY, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(
@@ -53,7 +51,7 @@ class Argonautelist extends React.Component {
             console.log(itemID);
             
 
-            fetch("https://api.airtable.com/v0/appkXhxTVwmskcaPA/argonautes/"+itemID+"?api_key="+APIkey, {
+            fetch("https://api.airtable.com/v0/appkXhxTVwmskcaPA/argonautes/"+itemID+"?api_key="+process.env.AIRTBL_API_KEY, {
                 method: "DELETE"                    
                 }
         ).then(response => response.json())
@@ -74,7 +72,7 @@ class Argonautelist extends React.Component {
     }
 
     async refreshData() {
-        fetch('https://api.airtable.com/v0/appkXhxTVwmskcaPA/argonautes?api_key='+APIkey)
+        fetch('https://api.airtable.com/v0/appkXhxTVwmskcaPA/argonautes?api_key='+process.env.AIRTBL_API_KEY)
         .then((resp) => resp.json())
         .then(data => {
            this.setState({ items: data.records });

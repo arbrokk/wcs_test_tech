@@ -1,5 +1,7 @@
 import React from 'react';
 
+const APIkey = process.env.AIRTBL_API_KEY;
+
 class Argonautelist extends React.Component {
 
     constructor(props) {
@@ -9,7 +11,6 @@ class Argonautelist extends React.Component {
             items: [],
             DataisLoaded: false
         };
-        const APIkey = process.env.AIRTBL_API_KEY;
 
 
         this.handleChange = this.handleChange.bind(this);

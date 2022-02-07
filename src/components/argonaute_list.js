@@ -1,15 +1,14 @@
 import React from 'react';
-const APIServ="https://wcs-test-api.herokuapp.com"
 
 class Argonautelist extends React.Component {
     constructor(props) {
         super(props);
-
         this.state = {
             name: '',
             items: [],
             DataisLoaded: false
         };
+
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     };
@@ -21,17 +20,23 @@ class Argonautelist extends React.Component {
     handleSubmit(e) {
         e.preventDefault();
         try {
-            fetch(APIServ+"/argonaute/add", {
+            fetch("https://api.airtable.com/v0/appkXhxTVwmskcaPA/argonautes?api_key=key4TVWBuan5bRXL5", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({'name': this.state.name}),
+                body: JSON.stringify(
+                    {
+                        "records": [
+                            {
+                              "fields": {
+                                "Name": this.state.name
+                              }
+                            }],
+                    }
+                    ),
             }).then(response => response.json())
                 .then(data =>
                 {
                     this.refreshData();
-                    if(data['code']==="error"){
-                        alert("Cet argonaute déjà dans la liste");
-                    }
                 });
         } catch (err) {
             console.log(err);
@@ -39,34 +44,24 @@ class Argonautelist extends React.Component {
     };
 
     removeArgonaute(singleItem) {
-        try {
-            fetch(APIServ+"/argonaute/del", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({'name': singleItem}),
-            }).then(
-                this.refreshData()
-            )
 
-        } catch (err) {
-            console.log(err);
-        }
     }
+    
 
     componentDidMount() {
         this.refreshData();
     }
 
     async refreshData() {
-        fetch(
-            APIServ+"/argonaute/list")
-            .then((res) => res.json())
-            .then((json) => {
-                this.setState({
-                    items: json,
-                    DataisLoaded: true
-                });
-            })
+        fetch('https://api.airtable.com/v0/appkXhxTVwmskcaPA/argonautes?api_key=key4TVWBuan5bRXL5')
+        .then((resp) => resp.json())
+        .then(data => {
+           this.setState({ items: data.records });
+           this.setState({DataisLoaded: true})
+           console.log(this.state.items[0]["id"]);
+        }).catch(err => {
+          // Error :(
+        });
     };
 
     render() {
@@ -95,15 +90,18 @@ class Argonautelist extends React.Component {
                     </div>
                 </form>
 
-                <h2 className="font-title text-2xl py-4">Membres de l'équipage ({Object.entries(items).length})</h2>
+                <h2 className="font-title text-2xl py-4">Membres de l'équipage ({this.state.items.length})</h2>
                 <section className="grid grid-cols-3">
+
                     {
-                        Object.entries(items).map(([key, item]) => (
-                            <ol key={key} className="capitalize py-2" onClick={() => this.removeArgonaute(item.name)}>
-                                { item.name }
+                        Object.entries(this.state.items).map(([key, item]) => (
+                            <ol key={key} className="capitalize py-2" >
+                                {item["fields"]["Name"]}
+                                <span onClick={() => this.removeArgonaute(item["fields"])}>x</span>
                             </ol>
                         ))
-                    }</section>
+                    }
+                </section>
             </div>
         );
     }
